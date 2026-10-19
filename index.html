@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><title>Bonena Maju Sejahtera</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -73,6 +73,17 @@ table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}th,td{white
 .cbar.on{display:flex;position:fixed;left:10px;right:10px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:7;background:#2563eb;color:#fff;border-radius:12px;padding:12px 16px;justify-content:space-between;align-items:center;box-shadow:0 6px 20px rgba(37,99,235,.4);cursor:pointer}
 #modal{align-items:flex-end;padding:0}.mb{max-width:none;border-radius:16px 16px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 }
+.hb2{border:0;background:transparent;padding:8px;border-radius:8px;cursor:pointer;color:var(--ink);display:grid;place-items:center}.hb2:hover{background:#f1f5f9}
+.ov2{display:none}@media(min-width:801px){.shell.col aside{display:none}}
+@media(max-width:800px){
+aside{position:fixed;top:0;bottom:0;left:0;right:auto;width:272px;height:100%;flex-direction:column;gap:2px;padding:16px 12px;border-top:0;overflow-y:auto;overflow-x:hidden;transform:translateX(-100%);transition:transform .22s;z-index:30}
+.shell.open aside{transform:none;box-shadow:8px 0 30px rgba(0,0,0,.4)}
+.ov2{position:fixed;inset:0;background:#0f172a99;z-index:25}.shell.open .ov2{display:block}
+.brand{display:flex}.side-foot{display:block}
+aside button{flex-direction:row;gap:12px;min-width:0;padding:12px;font-size:15px;text-align:left;justify-content:flex-start;border-left:3px solid transparent;border-radius:6px}
+aside button.on{background:#1e293b;color:#fff;border-left-color:#3b82f6}
+main{padding:14px 12px 100px}.cbar.on{bottom:calc(14px + env(safe-area-inset-bottom))}
+}
 </style></head><body>
 <div id="app"></div><div id="modal"></div>
 <script>
@@ -107,14 +118,16 @@ const closeM=()=>$('modal').style.display='none';
 const KEU='<path d="M3 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V5a2 2 0 0 1 2-2h12v4"/><circle cx="16" cy="14" r="1.2"/>',KSR='<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8"/>';
 const IC={dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',kasir:KSR,keu:KEU,keuangan:KEU,absen:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',shift:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',rekap:'<path d="M3 3v18h18"/><path d="M8 16V9M13 16V5M18 16v-4"/>',aset:'<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',logo:'<path d="M6 3v7a2 2 0 0 0 4 0V3M8 3v18M17 21V3c-2.2 1-3 4-3 7s1 4 3 4"/>',admin:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',karyawan:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 0 1 0 6M18 14c2 .6 3 2.5 3 5"/>'};
 const ic=(k,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]||''}</svg>`;
+IC.burger='<path d="M4 6h16M4 12h16M4 18h16"/>';let sbCol=false;
+function tgl(){const s=document.querySelector('.shell');if(innerWidth>800){sbCol=!sbCol;s.classList.toggle('col')}else s.classList.toggle('open')}
 const ROLES={admin:['','Pemilik / Admin','Akses penuh semua menu'],kasir:['','Kasir','Input pesanan & cetak nota'],keuangan:['','Keuangan','Input transaksi & laporan'],karyawan:['','Karyawan','Absensi & jadwal shift']};
 function login(){U=null;$('app').innerHTML=`<div class="hero"><div style="max-width:860px;width:100%;text-align:center"><div class="logo" style="margin:auto;width:66px;height:66px;">${ic('logo',32)}</div><h1 style="margin:12px 0 2px">Bonena Maju Sejahtera</h1><p style="color:var(--mut);margin:0 0 26px">Sistem Manajemen Rumah Makan · Versi Demo<br>Pilih peran untuk melanjutkan</p><div class="roles">${Object.entries(ROLES).map(([k,v])=>`<div class="rc" onclick="pickRole('${k}')"><i>${ic(k,26)}</i><b>${v[1]}</b><br><small style="color:var(--mut)">${v[2]}</small></div>`).join('')}</div><div id="who"></div></div></div>`}
 function pickRole(r){const l=S.users.filter(u=>u.role==r);if(l.length==1)return enter(l[0].id);$('who').innerHTML=`<div class="card" style="margin-top:18px"><h3>Masuk sebagai siapa?</h3><div class="row" style="justify-content:center">${l.map(u=>`<button class="b" onclick="enter('${u.id}')">${u.n}</button>`).join('')}</div></div>`}
 function enter(id){U=S.users.find(u=>u.id==id);cur=NAV.find(n=>n[2].includes(U.role))[0];render()}
 const resetDemo=()=>{if(confirm('Reset semua data demo?')){S=seed();save();render()}};
 function render(){if(!U)return login();const R=ROLES[U.role];
- $('app').innerHTML=`<div class="shell"><aside><div class="brand"><div class="logo">${ic('logo',20)}</div><div>Bonena<br><small style="color:var(--pri)">Maju Sejahtera</small></div></div>${NAV.filter(n=>n[2].includes(U.role)).map(n=>`<button class="${cur==n[0]?'on':''}" onclick="cur='${n[0]}';render()">${ic(n[0])}<span>${n[1]}</span></button>`).join('')}<div class="side-foot">Versi Demo</div></aside>
- <div class="content"><div class="top"><div><b style="font-size:17px">${NAV.find(n=>n[0]==cur)[1]}</b><small>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</small></div><div class="row" style="margin:0"><span class="tag">${R[1]}</span><span class="av">${U.n[0]}</span><b>${U.n}</b>${U.role=='admin'?'<button class="b s" onclick="resetDemo()">Reset Data</button>':''}<button class="b s" onclick="cart={};login()">Ganti Role</button></div></div><main id="main"></main></div></div>`;V[cur]()}
+ $('app').innerHTML=`<div class="shell ${sbCol?'col':''}"><aside><div class="brand"><div class="logo">${ic('logo',20)}</div><div>Bonena<br><small style="color:var(--pri)">Maju Sejahtera</small></div></div>${NAV.filter(n=>n[2].includes(U.role)).map(n=>`<button class="${cur==n[0]?'on':''}" onclick="cur='${n[0]}';render()">${ic(n[0])}<span>${n[1]}</span></button>`).join('')}<div class="side-foot"><b style="color:#e2e8f0">${U.n}</b><br>${R[1]} · Versi Demo</div></aside><div class="ov2" onclick="tgl()"></div>
+ <div class="content"><div class="top"><div class="row" style="margin:0;flex-wrap:nowrap"><button class="hb2" onclick="tgl()" aria-label="Menu">${ic('burger',22)}</button><div><b style="font-size:17px">${NAV.find(n=>n[0]==cur)[1]}</b><small>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</small></div></div><div class="row" style="margin:0"><span class="tag">${R[1]}</span><span class="av">${U.n[0]}</span><b>${U.n}</b>${U.role=='admin'?'<button class="b s" onclick="resetDemo()">Reset Data</button>':''}<button class="b s" onclick="cart={};login()">Ganti Role</button></div></div><main id="main"></main></div></div>`;V[cur]()}
 const mon=(d)=>d.slice(0,7);
 const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const V={};
